@@ -1,5 +1,4 @@
 import Goal from "../../data/Goal";
-import { Counter } from "../counter";
 import GoalComponent from "./GoalComponent";
 
 interface GoalContainerColumnInterface {
@@ -8,10 +7,10 @@ interface GoalContainerColumnInterface {
 
 const GoalContainerColumn = ({ goals }: GoalContainerColumnInterface) => {
   const goalComponents = goals.map((x) => (
-    <GoalComponent {...x}></GoalComponent>
+    <GoalComponent key={x.id} {...x}></GoalComponent>
   ));
 
-  return <ul className="GoalContainer">{goalComponents}<Counter></Counter><Counter></Counter></ul>;
+  return <ul className="GoalContainer">{goalComponents}</ul>;
 };
 
 export default GoalContainerColumn;

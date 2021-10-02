@@ -1,10 +1,7 @@
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
-import { useSelector } from "react-redux";
-import { decrement } from "../../counterslice";
 import Goal from "../../data/Goal";
-import goalsSlice, { increment } from "../../data/goalsSlice";
 
 function GoalComponent(goal: Goal) {
   const goalNumber = goal.id;
@@ -12,11 +9,11 @@ function GoalComponent(goal: Goal) {
   return (
     <li className="Goal" onClick={() => openGoal(goalNumber)}>
       <h4>{goal.name}</h4>
-      <IconButton color="primary" aria-label="add to shopping cart">
-        <EditIcon onClick={editGoal} />
+      <IconButton onClick={() => editGoal(goalNumber)} >
+        <EditIcon />
       </IconButton>
-      <IconButton>
-        <DeleteIcon onClick={deleteGoal} />
+      <IconButton onClick={() => deleteGoal(goalNumber)}>
+        <DeleteIcon />
       </IconButton>
       <p>{goal.description}</p>
     </li>
@@ -25,13 +22,12 @@ function GoalComponent(goal: Goal) {
 
 // const count = useSelector(state => state.count)
 
-const editGoal = () => {
-  increment();
+const editGoal = (goalId: number) => {
+  console.log("editing goal # " + goalId);
 }
 
-const deleteGoal = () => {
-  decrement();
-  // console.log(goalsSlice.)
+const deleteGoal = (goalId: number) => {
+  console.log("deleting goal # " + goalId);
 }
 
 const openGoal = (goalId: number) => {

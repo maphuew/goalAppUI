@@ -2,36 +2,28 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import Goal from "./Goal"
 
 interface GoalSliceState {
-    goals: Goal[];
-    count: number;
+    goals: GoalCache;
+    selectedGoal?: Goal;
+}
+
+export interface GoalCache {
+    [id: number]: Goal;
 }
 
 const initialState: GoalSliceState = {
-    goals: [],
-    count: 0,
+    goals: {},
 }
 
 const goalsSlice = createSlice({
     name: 'goals',
     initialState,
     reducers: {
-        reloadGoals: state => { },
-        increment: state => {
-            state.count += 1;
-        },
-        decrement: state => {
-            state.count -= 1;
-        },
-        receivedGoals(state, action: PayloadAction<Goal[]>) {
-            const goals = action.payload;
-            goals.forEach(g => {
-                state.goals.push(g);
-            })
-            // state.goals = action.payload;
+        receivedGoals(state, action: PayloadAction<GoalCache>) {
+            state.goals = action.payload;
         }
     }
 })
 
-export const { reloadGoals, increment, decrement, receivedGoals } = goalsSlice.actions;
+export const { receivedGoals } = goalsSlice.actions;
 
 export default goalsSlice.reducer;
