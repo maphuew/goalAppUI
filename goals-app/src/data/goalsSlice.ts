@@ -3,7 +3,7 @@ import Goal from "./Goal"
 
 interface GoalSliceState {
     goals: GoalCache;
-    selectedGoal?: Goal;
+    selectedGoalId?: number;
 }
 
 export interface GoalCache {
@@ -20,10 +20,13 @@ const goalsSlice = createSlice({
     reducers: {
         receivedGoals(state, action: PayloadAction<GoalCache>) {
             state.goals = action.payload;
+        },
+        selectectedGoal(state, action: PayloadAction<number>) {
+            state.selectedGoalId = action.payload;
         }
     }
 })
 
-export const { receivedGoals } = goalsSlice.actions;
+export const { receivedGoals, selectectedGoal } = goalsSlice.actions;
 
 export default goalsSlice.reducer;

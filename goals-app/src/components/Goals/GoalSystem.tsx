@@ -11,10 +11,12 @@ interface GoalSystemInterface {
   selectedGoal?: Goal;
 }
 
-const GoalSystem = ({ goalTree, selectedGoal }: GoalSystemInterface) => {
+const GoalSystem = ({ goalTree }: GoalSystemInterface) => {
   // Todo: store the last selected goal per user on server? or localstorage?
   const dispatch = useAppDispatch();
   const goals = useAppSelector(state => state.goals.goals);
+  const selectedGoalId = useAppSelector(state => state.goals.selectedGoalId);
+  const selectedGoal = selectedGoalId ? goals[selectedGoalId] : undefined;
 
   useEffect(() => {
     getGoalTree().then(goalsCache => {
@@ -24,9 +26,9 @@ const GoalSystem = ({ goalTree, selectedGoal }: GoalSystemInterface) => {
 
   const columnData: Goal[][] = []
 
-  if (selectedGoal && selectedGoal.parentId) {
+  if (selectedGoal) {
     // If there's a goal selected
-    let nextGoal: Goal | undefined = goals[selectedGoal.parentId];
+    let nextGoal: Goal | undefined = selectedGoal;
     while (nextGoal) {
       columnData.unshift(GetSubgoals(goals, nextGoal));
       nextGoal = GetParentGoal(goals, nextGoal);
