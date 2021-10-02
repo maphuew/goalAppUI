@@ -1,4 +1,5 @@
 import Goal from "../../data/Goal";
+import { Counter } from "../counter";
 import GoalComponent from "./GoalComponent";
 
 interface GoalContainerColumnInterface {
@@ -10,7 +11,7 @@ const GoalContainerColumn = ({ goals }: GoalContainerColumnInterface) => {
     <GoalComponent {...x}></GoalComponent>
   ));
 
-  return <ul className="GoalContainer">{goalComponents}</ul>;
+  return <ul className="GoalContainer">{goalComponents}<Counter></Counter><Counter></Counter></ul>;
 };
 
 export default GoalContainerColumn;

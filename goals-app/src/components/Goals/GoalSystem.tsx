@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import Goal from "../../data/Goal";
+import { useAppDispatch, useAppSelector } from "../../data/hooks";
 import GoalContainerColumn from "./GoalContainerColumn";
 
 import {
@@ -8,26 +10,7 @@ import {
   useQuery,
   gql,
 } from "@apollo/client";
-import { useEffect, useState } from "react";
-import { JsxElement } from "typescript";
-
-interface GoalSystemInterface {
-  goalTree: Goal[];
-  selectedGoal?: Goal;
-}
-
-const GetGoalById = (goals: Goal[], id: number): Goal => {
-  function getGoal(goals: Goal[], id: number): Goal | undefined {
-    for (let goal of goals) {
-      if (goal.id == id)
-        return goal;
-      let GoalInChildren = GetGoalById(goal.goals, id);
-      if (GoalInChildren) return GoalInChildren;
-    }
-    return undefined;
-  }
-  return getGoal(goals, id) as Goal;
-};
+import { receivedGoals } from "../../data/goalsSlice";
 
 const client = new ApolloClient({
   uri: "http://0.0.0.0:8080/graphql",
@@ -38,16 +21,16 @@ async function getGoalTree(): Promise<Goal[]> {
   async function getGoal(id: number): Promise<Goal> {
     let goal = (await client.query({
       query: gql`
-    query goal {
-      goal(id: ${id}) {
-        id,
-        name
-        description,
-        goals{
-          id
+      query goal {
+        goal(id: ${id}) {
+          id,
+          name
+          description,
+          goals{
+            id
+          }
         }
-      }
-    }`
+      }`
     })).data.goal;
 
     let subGoals: Goal[] = [];
@@ -74,34 +57,38 @@ async function getGoalTree(): Promise<Goal[]> {
   return [goals];
 }
 
+interface GoalSystemInterface {
+  goalTree: Goal[];
+  selectedGoal?: Goal;
+}
 
-const GoalSystem = ({ goalTree }: GoalSystemInterface) => {
+const GoalSystem = ({ goalTree, selectedGoal }: GoalSystemInterface) => {
   // Todo: store the last selected goal per user on server? or localstorage?
-
-  const [goals, setGoals] = useState<Goal[]>([]);
-  const [selectedGoal, setSelectedGoal] = useState<Goal | undefined>();
+  const dispatch = useAppDispatch();
+  const goals = useAppSelector(state => state.goals.goals);
+  console.log(goals);
 
   useEffect(() => {
-    getGoalTree().then(x => {
-      setGoals(x);
-    })
+    getGoalTree().then(goals => {
+      dispatch(receivedGoals(goals));
+    });
   }, []);
 
   const columns: JSX.Element[] = [];
 
-  if (selectedGoal) {
-    // If there's a goal selected
-    let nextGoal = selectedGoal.parent;
-    while (nextGoal) {
-      let column = (
-        <GoalContainerColumn goals={nextGoal.goals}></GoalContainerColumn>
-      );
-      columns.unshift(column);
-      nextGoal = nextGoal.parent;
-    }
-  }
+  // if (selectedGoal) {
+  //   // If there's a goal selected
+  //   let nextGoal = selectedGoal.parent;
+  //   while (nextGoal) {
+  //     let column = (
+  //       <GoalContainerColumn goals={nextGoal.goals}></GoalContainerColumn>
+  //     );
+  //     columns.unshift(column);
+  //     nextGoal = nextGoal.parent;
+  //   }
+  // }
 
-  columns.unshift(<GoalContainerColumn goals={goals}></GoalContainerColumn>);
+  // columns.unshift(<GoalContainerColumn goals={goals}></GoalContainerColumn>);
 
   return <div className="mainbody">{columns}</div>;
 };
